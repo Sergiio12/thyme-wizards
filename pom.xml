@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -16,22 +16,6 @@
     <name>taming-thymeleaf</name>
     <description>My first app with Tailwind, PostCSS, Gulp and Spring.</description>
     <url/>
-
-    <licenses>
-        <license/>
-    </licenses>
-
-    <developers>
-        <developer/>
-    </developers>
-
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
-
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -67,56 +51,44 @@
     <build>
         <plugins>
         
-            <plugin>
-	            <groupId>com.maciejwalkowiak.paseq</groupId>
-	            <artifactId>paseq-maven-plugin</artifactId>
-	            <version>0.1.0</version>
-	            <!-- configuration for building the package -->
-	            <executions>
-	                <execution>
-	                    <phase>compile</phase>
-	                    <!-- ... this execution stay as it was -->
-	                </execution>
-	                <execution>
-	                    <id>dev</id>
-	                    <!-- configuration for running in dev mode with ./mvnw paseq:exec@dev -->
-	                    <configuration>
-	                        <tasks>
-	                            <!-- first run npm install -->
-	                            <task>
-	                                <exec>
-	                                    <directory>src/main/frontend</directory>
-	                                    <command>C:\Program Files\nodejs\npm.cmd run build</command>
-	                                </exec>
-	                            </task>
-	                            <!-- then start watch task in the background and output the result to `src/main/resources/static/main.css` -->
-	                            <task>
-	                                <async>true</async>
-	                                <exec>
-	                                    <directory>src/main/frontend</directory>
-	                                    <command>npm run watch -- -o ../resources/static/main.css</command>
-	                                </exec>
-	                            </task>
-	                            <!--
-	                            optionally post-processed CSS file can also be generated in `target` directory.
-	                            Changes to main.css will trigger live reload without a need to recompile the project in Intellij IDEA
-	                            -->
-	                            <task>
-	                                <async>true</async>
-	                                <exec>
-	                                    <directory>src/main/frontend</directory>
-	                                    <command>npm run watch -- -o ${project.build.directory}/classes/static/main.css</command>
-	                                </exec>
-	                            </task>
-	                            <task>
-	                                <goals>spring-boot:run</goals>
-	                            </task>
-	                        </tasks>
-	                    </configuration>
-	                </execution>
-	            </executions>
-      		</plugin>
-
+			<plugin>
+			    <groupId>com.maciejwalkowiak.paseq</groupId>
+			    <artifactId>paseq-maven-plugin</artifactId>
+			    <version>0.1.0</version>
+			    <executions>
+			        <execution>
+			            <id>frontend-tasks</id>
+			            <phase>compile</phase> <!-- Fase donde ocurren las tareas de frontend -->
+			            <configuration>
+			                <tasks>
+			                    <!-- Instalar las dependencias de Node.js -->
+			                    <task>
+			                        <exec>
+			                            <directory>src/main/frontend</directory>
+			                            <command>C:\Program Files\nodejs\npm.cmd install</command>
+			                        </exec>
+			                    </task>
+			                    <!-- Construir el CSS inicial -->
+			                    <task>
+			                        <exec>
+			                            <directory>src/main/frontend</directory>
+			                            <command>C:\Program Files\nodejs\npm.cmd run build</command>
+			                        </exec>
+			                    </task>
+			                    <!-- Observar los cambios en CSS -->
+			                    <task>
+			                        <async>true</async> <!-- Permite que watch siga corriendo mientras Maven continúa -->
+			                        <exec>
+			                            <directory>src/main/frontend</directory>
+			                            <command>C:\Program Files\nodejs\npm.cmd run watch</command>
+			                        </exec>
+			                    </task>
+			                </tasks>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+	
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
